@@ -174,14 +174,29 @@ namespace WeddingPlannerWPF.ViewModels
                     return;
                 }
 
-                SelectedTable.Add(SelectedGuest);
-                AvailableGuests.Remove(SelectedGuest);
-                AddLog($"Assigned {SelectedGuest.Name} to {SelectedTable.Name}");
+                Guest guest = SelectedGuest;
+                Table table = SelectedTable;
 
-                // Clear selection after assignment
-                SelectedGuest = null;
+                AddLog($"🔄 Assigning {guest.Name} to {table.Name}...");
 
-                UpdateNotificationDisplay();
+                // Create family component for the guest
+                var family = new Family(guest.FamilyId);
+                family.Add(guest);
+
+                if (table.CanAdd(family))
+                {
+                    table.Add(family);
+                    AvailableGuests.Remove(guest);
+                    AddLog($"✅ Successfully assigned {guest.Name} to {table.Name}!");
+
+                    // Clear selections
+                    SelectedGuest = null;
+                    UpdateNotificationDisplay();
+                }
+                else
+                {
+                    AddLog($"❌ Cannot assign {guest.Name} to {table.Name} - constraints violated");
+                }
             }
             catch (Exception ex)
             {
