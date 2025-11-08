@@ -2,6 +2,7 @@
 
 namespace WeddingPlannerWPF.Models
 {
+    // Composite pattern - Composite компонент, съдържащ гости
     public class Family : ISeatComponent
     {
         public string FamilyId { get; }
@@ -16,7 +17,7 @@ namespace WeddingPlannerWPF.Models
 
         public int GetGuestCount() => Members.Count;
 
-        public IEnumerable<Guest> GetGuests() // Iterator pattern
+        public IEnumerable<Guest> GetGuests() // Iterator pattern -> обхожда всички гости в семейството
         {
             foreach (var guest in Members)
             {

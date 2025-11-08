@@ -5,6 +5,7 @@ using WeddingPlannerWPF.Models;
 
 namespace WeddingPlannerWPF.ViewModels
 {
+    // Основната логика и връзка между View и Models в MVVM архитектурата
     public class MainViewModel : ViewModelBase
     {
         private string _guestName;
@@ -14,14 +15,13 @@ namespace WeddingPlannerWPF.ViewModels
         private string _log;
         private string _notificationLog;
 
-        // =============== FIX: PROPER PROPERTIES WITH BACKING FIELDS ===============
         private Guest _selectedGuest;
         private Table _selectedTable;
 
         public ObservableCollection<Guest> AvailableGuests { get; } = new ObservableCollection<Guest>();
         public ObservableCollection<Table> Tables { get; } = new ObservableCollection<Table>();
 
-        // Observer Pattern
+        // Observer Pattern -> наблюдател за събития от таблиците
         public WeddingPlanner Planner { get; private set; }
 
         public string NotificationLog
@@ -30,7 +30,6 @@ namespace WeddingPlannerWPF.ViewModels
             set { _notificationLog = value; OnPropertyChanged(); }
         }
 
-        // =============== FIX: PROPER SELECTED GUEST PROPERTY ===============
         public Guest SelectedGuest
         {
             get => _selectedGuest;
@@ -38,12 +37,11 @@ namespace WeddingPlannerWPF.ViewModels
             {
                 _selectedGuest = value;
                 OnPropertyChanged();
-                // Refresh command states
+                // Рефрешване на състоянието на командите
                 CommandManager.InvalidateRequerySuggested();
             }
         }
 
-        // =============== FIX: PROPER SELECTED TABLE PROPERTY ===============
         public Table SelectedTable
         {
             get => _selectedTable;
@@ -51,7 +49,7 @@ namespace WeddingPlannerWPF.ViewModels
             {
                 _selectedTable = value;
                 OnPropertyChanged();
-                // Refresh command states
+                // Рефрешване на състоянието на командите
                 CommandManager.InvalidateRequerySuggested();
             }
         }
@@ -86,7 +84,7 @@ namespace WeddingPlannerWPF.ViewModels
             set { _log = value; OnPropertyChanged(); }
         }
 
-        // Commands
+        // // Команди за UI взаимодействия
         public ICommand AddGuestCommand { get; }
         public ICommand CreateTableCommand { get; }
         public ICommand AssignGuestCommand { get; }
@@ -100,7 +98,6 @@ namespace WeddingPlannerWPF.ViewModels
         {
             Planner = new WeddingPlanner("Main Wedding Planner");
 
-            // =============== FIX: BETTER COMMAND VALIDATION ===============
             AddGuestCommand = new RelayCommand(AddGuest, () => !string.IsNullOrWhiteSpace(GuestName) && !string.IsNullOrWhiteSpace(FamilyId));
             CreateTableCommand = new RelayCommand(CreateTable);
             AssignGuestCommand = new RelayCommand(AssignGuest, () => SelectedGuest != null && SelectedTable != null);
@@ -115,13 +112,16 @@ namespace WeddingPlannerWPF.ViewModels
 
         private void LoadSampleData()
         {
-            // Add sample guests
-            AvailableGuests.Add(new Guest("Ivan Petrov", "Petrov"));
-            AvailableGuests.Add(new Guest("Maria Petrova", "Petrov"));
-            AvailableGuests.Add(new Guest("Georgi Ivanov", "Ivanov"));
-            AvailableGuests.Add(new Guest("Elena Ivanova", "Ivanov"));
-            AvailableGuests.Add(new Guest("Stoyan Dimitrov", "Dimitrov"));
-            AvailableGuests.Add(new Guest("Albena Dimitrova", "Dimitrov"));
+            // Добавяне на примерни гости в системата
+            AvailableGuests.Add(new Guest("Ivan Petrov", "Petrovi"));
+            AvailableGuests.Add(new Guest("Maria Petrova", "Petrovi"));
+            AvailableGuests.Add(new Guest("Georgi Ivanov", "Ivanovi"));
+            AvailableGuests.Add(new Guest("Elena Ivanova", "Ivanovi"));
+            AvailableGuests.Add(new Guest("Stoyan Dimitrov", "Dimitrovi"));
+            AvailableGuests.Add(new Guest("Albena Dimitrova", "Dimitrovi"));
+            AvailableGuests.Add(new Guest("Yoanna Todorova", "Todorovi"));
+            AvailableGuests.Add(new Guest("Stefan Todorov", "Todorovi"));
+            AvailableGuests.Add(new Guest("Ivailo Todorov", "Todorovi"));
 
             AddLog("Sample data loaded");
         }
@@ -161,7 +161,6 @@ namespace WeddingPlannerWPF.ViewModels
         {
             try
             {
-                // =============== FIX: BETTER NULL CHECKING ===============
                 if (SelectedGuest == null)
                 {
                     AddLog("Error: No guest selected");
@@ -177,9 +176,9 @@ namespace WeddingPlannerWPF.ViewModels
                 Guest guest = SelectedGuest;
                 Table table = SelectedTable;
 
-                AddLog($"🔄 Assigning {guest.Name} to {table.Name}...");
+                AddLog($"Assigning {guest.Name} to {table.Name}...");
 
-                // Create family component for the guest
+                // Създаване на family компонент за госта
                 var family = new Family(guest.FamilyId);
                 family.Add(guest);
 
@@ -187,15 +186,15 @@ namespace WeddingPlannerWPF.ViewModels
                 {
                     table.Add(family);
                     AvailableGuests.Remove(guest);
-                    AddLog($"✅ Successfully assigned {guest.Name} to {table.Name}!");
+                    AddLog($"Successfully assigned {guest.Name} to {table.Name}!");
 
-                    // Clear selections
+                    // Изчистване на селектирания гост
                     SelectedGuest = null;
                     UpdateNotificationDisplay();
                 }
                 else
                 {
-                    AddLog($"❌ Cannot assign {guest.Name} to {table.Name} - constraints violated");
+                    AddLog($"Cannot assign {guest.Name} to {table.Name} - constraints violated");
                 }
             }
             catch (Exception ex)

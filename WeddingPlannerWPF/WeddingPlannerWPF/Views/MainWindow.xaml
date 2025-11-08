@@ -17,9 +17,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Left Panel - Controls -->
         <StackPanel Grid.Column="0" Margin="10">
-            <!-- Add Guest -->
             <GroupBox Header="Add Guest" Margin="0,0,0,10">
                 <StackPanel>
                     <TextBox Text="{Binding GuestName, UpdateSourceTrigger=PropertyChanged}" 
@@ -34,12 +32,10 @@
                 </StackPanel>
             </GroupBox>
 
-            <!-- Tables -->
             <GroupBox Header="Tables" Margin="0,0,0,10">
                 <StackPanel>
                     <Button Content="Create New Table" Command="{Binding CreateTableCommand}" Margin="5"/>
 
-                    <!-- =============== FIX: ADDED VISUAL FEEDBACK =============== -->
                     <TextBlock Text="1. Select guest from left list" Margin="5,10,5,0" FontWeight="Bold" Foreground="DarkBlue"/>
                     <TextBlock Text="2. Select table from right list" Margin="5,0,5,5" FontWeight="Bold" Foreground="DarkBlue"/>
                     <Button Content="Assign Selected Guest" Command="{Binding AssignGuestCommand}" Margin="5" Background="LightGreen"/>
@@ -51,7 +47,6 @@
                 </StackPanel>
             </GroupBox>
 
-            <!-- Ban Families -->
             <GroupBox Header="Ban Family Pair" Margin="0,0,0,10">
                 <StackPanel>
                     <TextBox Text="{Binding BanFamily1, UpdateSourceTrigger=PropertyChanged}" 
@@ -67,7 +62,6 @@
                 </StackPanel>
             </GroupBox>
 
-            <!-- Observer Pattern -->
             <GroupBox Header="Observer Pattern" Background="LightYellow">
                 <StackPanel>
                     <TextBlock Text="Wedding Planner Notifications" FontWeight="Bold" Margin="5"/>
@@ -79,7 +73,6 @@
             </GroupBox>
         </StackPanel>
 
-        <!-- Right Panel - Display -->
         <Grid Grid.Column="1" Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -87,14 +80,12 @@
                 <RowDefinition Height="150"/>
             </Grid.RowDefinitions>
 
-            <!-- Available Guests and Tables -->
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- =============== FIX: BETTER LISTBOX BINDING =============== -->
                 <GroupBox Header="Available Guests" Margin="5">
                     <StackPanel>
                         <TextBlock Text="Click to select a guest:" Margin="5,5,5,0" FontWeight="Bold"/>
@@ -122,7 +113,6 @@
                 </GroupBox>
             </Grid>
 
-            <!-- Log -->
             <GroupBox Header="Event Log" Grid.Row="1" Margin="5">
                 <TextBox Text="{Binding Log, Mode=OneWay}" 
                          IsReadOnly="True" 
@@ -131,7 +121,6 @@
                          FontFamily="Consolas"/>
             </GroupBox>
 
-            <!-- Observer Pattern Notifications -->
             <GroupBox Header="🔔 Observer Pattern Notifications" Grid.Row="2" Margin="5" Background="LightCyan">
                 <TextBox Text="{Binding NotificationLog, Mode=OneWay}" 
                          IsReadOnly="True" 

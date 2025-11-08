@@ -1,13 +1,14 @@
 ﻿namespace WeddingPlannerWPF.Models.Interfaces
 {
+    // Composite pattern -> общ интерфейс за всички компоненти
     public interface ISeatComponent
     {
-        string Name { get; }
-        int GetGuestCount();
-        IEnumerable<Guest> GetGuests(); // Iterator pattern
-        bool CanAdd(ISeatComponent component);
-        void Add(ISeatComponent component);
-        void Remove(ISeatComponent component);
-        List<string> GetFamilies();
+        public string Name { get; }
+        public int GetGuestCount();
+        public IEnumerable<Guest> GetGuests(); // Iterator pattern -> метод за обхождане
+        protected bool CanAdd(ISeatComponent component);
+        protected void Add(ISeatComponent component);
+        protected void Remove(ISeatComponent component);
+        public List<string> GetFamilies();
     }
 }

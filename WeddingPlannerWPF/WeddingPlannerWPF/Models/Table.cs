@@ -2,6 +2,7 @@
 
 namespace WeddingPlannerWPF.Models
 {
+    // Composite pattern - Composite компонент, съдържащ гости/семейства
     public class Table : ISeatComponent, IWeddingSubject
     {
         public int TableId { get; }
@@ -10,7 +11,7 @@ namespace WeddingPlannerWPF.Models
         public int MaxFamilies { get; set; } = 2;
 
         private List<ISeatComponent> Components { get; set; }
-        private HashSet<Tuple<string, string>> BannedFamilyPairs { get; set; }  // Changed to Tuple
+        private HashSet<Tuple<string, string>> BannedFamilyPairs { get; set; }  
 
         private List<IWeddingObserver> _observers = new List<IWeddingObserver>();
 
@@ -65,7 +66,7 @@ namespace WeddingPlannerWPF.Models
 
         public int GetGuestCount() => Components.Sum(c => c.GetGuestCount());
 
-        public IEnumerable<Guest> GetGuests() // Iterator pattern
+        public IEnumerable<Guest> GetGuests() // Iterator pattern -> обхожда всички гости на масата
         {
             foreach (var component in Components)
             {
@@ -78,34 +79,32 @@ namespace WeddingPlannerWPF.Models
 
         public bool CanAdd(ISeatComponent component)
         {
-            // Check guest limit
+            // Проверка за лимит на гости на масата
             if (GetGuestCount() + component.GetGuestCount() > MaxGuests)
             {
-
                 NotifyRuleViolation($"Cannot add {component.Name} to {Name}: Exceeds maximum of {MaxGuests} guests");
 
                 return false;
             }
 
-            // Check family limit
+            // Проверка за лимит на семейства на масата
             var currentFamilies = GetFamilies();
             var newFamilies = component.GetFamilies();
             var combinedFamilies = currentFamilies.Union(newFamilies).ToList();
 
             if (combinedFamilies.Count > MaxFamilies)
             {
-
                 NotifyRuleViolation($"Cannot add {component.Name} to {Name}: Exceeds maximum of {MaxFamilies} families");
 
                 return false;
             }
 
-            // Check banned family pairs - FIXED
+            // Проверка за забранени семейни двойки
             foreach (var currentFamily in currentFamilies)
             {
                 foreach (var newFamily in newFamilies)
                 {
-                    // Create sorted tuple to ensure consistent ordering
+                    // Създаване на сортирана двойка за консистентност
                     var family1 = string.Compare(currentFamily, newFamily) < 0 ? currentFamily : newFamily;
                     var family2 = string.Compare(currentFamily, newFamily) < 0 ? newFamily : currentFamily;
                     var pair = Tuple.Create(family1, family2);
@@ -130,7 +129,7 @@ namespace WeddingPlannerWPF.Models
 
             Components.Add(component);
 
-            // Notify about the added guest(s)
+            // Observer pattern -> нотифициране за добавените гости
             foreach (var guest in component.GetGuests())
             {
                 NotifyGuestAdded(guest, this);
@@ -141,7 +140,7 @@ namespace WeddingPlannerWPF.Models
         {
             Components.Remove(component);
 
-            // Notify about the removed guest(s)
+            // Observer pattern -> нотифициране за премахнатите гости
             foreach (var guest in component.GetGuests())
             {
                 NotifyGuestRemoved(guest, this);
@@ -160,7 +159,7 @@ namespace WeddingPlannerWPF.Models
 
         public void BanFamilyPair(string family1, string family2)
         {
-            // Create sorted tuple to ensure consistent ordering - FIXED
+            // Създаване на сортирана двойка за консистентност
             var sortedFamily1 = string.Compare(family1, family2) < 0 ? family1 : family2;
             var sortedFamily2 = string.Compare(family1, family2) < 0 ? family2 : family1;
             var pair = Tuple.Create(sortedFamily1, sortedFamily2);

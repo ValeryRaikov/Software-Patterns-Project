@@ -2,14 +2,14 @@
 
 namespace WeddingPlannerWPF.Models
 {
+    // Composite pattern -> Leaf компонент
     public class Guest : ISeatComponent
     {
-        public string GuestName { get; }  // Changed from Name to GuestName
+        public string GuestName { get; } 
         public string FamilyId { get; }
         public string DisplayName => $"{GuestName} ({FamilyId})";
 
-        // ISeatComponent implementation
-        public string Name => DisplayName;  // This satisfies the interface
+        public string Name => DisplayName;  // Interface имплементация
 
         public Guest(string name, string familyId)
         {
@@ -19,11 +19,11 @@ namespace WeddingPlannerWPF.Models
 
         public int GetGuestCount() => 1;
 
-        public IEnumerable<Guest> GetGuests() // Iterator pattern
+        public IEnumerable<Guest> GetGuests() // Iterator pattern -> връща само себе си
         {
             if (this != null)
             {
-                yield return this;
+                yield return this; // Гостът е сам свой собствен итератор
             }
         }
 
@@ -31,12 +31,12 @@ namespace WeddingPlannerWPF.Models
 
         public void Add(ISeatComponent component)
         {
-            throw new System.InvalidOperationException("Cannot add to a guest");
+            throw new InvalidOperationException("Cannot add to a guest");
         }
 
         public void Remove(ISeatComponent component)
         {
-            throw new System.InvalidOperationException("Cannot remove from a guest");
+            throw new InvalidOperationException("Cannot remove from a guest");
         }
 
         public List<string> GetFamilies() => new List<string> { FamilyId };

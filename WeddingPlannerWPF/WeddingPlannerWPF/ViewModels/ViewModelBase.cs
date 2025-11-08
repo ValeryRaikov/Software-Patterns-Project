@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace WeddingPlannerWPF.ViewModels
 {
+    // Базов клас за всички ViewModels с INotifyPropertyChanged -> data binding поддръжка
     public abstract class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;

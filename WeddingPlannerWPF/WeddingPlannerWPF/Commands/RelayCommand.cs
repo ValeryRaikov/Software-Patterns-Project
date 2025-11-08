@@ -2,6 +2,7 @@
 
 namespace WeddingPlannerWPF.Commands
 {
+    // Имплементация на ICommand за MVVM Pattern
     public class RelayCommand : ICommand
     {
         private readonly Action _execute;
