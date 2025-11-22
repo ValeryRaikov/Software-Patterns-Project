@@ -14,13 +14,17 @@ namespace WeddingPlannerWPF.Commands
             remove { CommandManager.RequerySuggested -= value; }
         }
 
+        // Конструктор - инициализира командата с изпълнител и опционален валидатор
         public RelayCommand(Action execute, Func<bool> canExecute = null)
         {
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;
         }
 
+        // Проверява дали командата може да бъде изпълнена в момента
         public bool CanExecute(object parameter) => _canExecute?.Invoke() ?? true;
+
+        // Изпълнява логиката на командата
         public void Execute(object parameter) => _execute();
     }
 }

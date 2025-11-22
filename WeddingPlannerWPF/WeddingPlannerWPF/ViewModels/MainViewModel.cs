@@ -6,6 +6,7 @@ using WeddingPlannerWPF.Models;
 namespace WeddingPlannerWPF.ViewModels
 {
     // Основната логика и връзка между View и Models в MVVM архитектурата
+    // Този клас е централният ViewModel, който координира всички операции по сватбеното планиране
     public class MainViewModel : ViewModelBase
     {
         private string _guestName;
@@ -18,10 +19,12 @@ namespace WeddingPlannerWPF.ViewModels
         private Guest _selectedGuest;
         private Table _selectedTable;
 
+        // Колекции за данните - ObservableCollection автоматично нотифицира UI за промени
         public ObservableCollection<Guest> AvailableGuests { get; } = new ObservableCollection<Guest>();
         public ObservableCollection<Table> Tables { get; } = new ObservableCollection<Table>();
 
         // Observer Pattern -> наблюдател за събития от таблиците
+        // WeddingPlanner служи като централен наблюдател и логър на всички събития
         public WeddingPlanner Planner { get; private set; }
 
         public string NotificationLog
@@ -84,7 +87,7 @@ namespace WeddingPlannerWPF.ViewModels
             set { _log = value; OnPropertyChanged(); }
         }
 
-        // // Команди за UI взаимодействия
+        // // Команди за UI взаимодействия - всяка команда свързва бутон с конкретна логика
         public ICommand AddGuestCommand { get; }
         public ICommand CreateTableCommand { get; }
         public ICommand AssignGuestCommand { get; }
@@ -96,8 +99,10 @@ namespace WeddingPlannerWPF.ViewModels
 
         public MainViewModel()
         {
+            // Инициализация на планировчика
             Planner = new WeddingPlanner("Main Wedding Planner");
 
+            // Инициализация на командите с соответствующи методи и условия за изпълнение
             AddGuestCommand = new RelayCommand(AddGuest, () => !string.IsNullOrWhiteSpace(GuestName) && !string.IsNullOrWhiteSpace(FamilyId));
             CreateTableCommand = new RelayCommand(CreateTable);
             AssignGuestCommand = new RelayCommand(AssignGuest, () => SelectedGuest != null && SelectedTable != null);
@@ -126,13 +131,16 @@ namespace WeddingPlannerWPF.ViewModels
             AddLog("Sample data loaded");
         }
 
+
         private void AddGuest()
         {
             try
             {
+                // Създаване на нов гост и добавяне към списъка с налични гости
                 var guest = new Guest(GuestName, FamilyId);
                 AvailableGuests.Add(guest);
                 AddLog($"Added guest: {guest.Name}");
+
                 GuestName = string.Empty;
                 FamilyId = string.Empty;
             }
@@ -146,6 +154,7 @@ namespace WeddingPlannerWPF.ViewModels
         {
             try
             {
+                // Създаване на нова маса с автоматично генериран ID
                 var table = new Table(Tables.Count + 1);
                 table.Attach(Planner);
                 Tables.Add(table);
@@ -161,6 +170,7 @@ namespace WeddingPlannerWPF.ViewModels
         {
             try
             {
+                // Валидация на входните данни
                 if (SelectedGuest == null)
                 {
                     AddLog("Error: No guest selected");
@@ -178,7 +188,7 @@ namespace WeddingPlannerWPF.ViewModels
 
                 AddLog($"Assigning {guest.Name} to {table.Name}...");
 
-                // Създаване на family компонент за госта
+                // Създаване на family компонент за госта и добавяне към масата
                 var family = new Family(guest.FamilyId);
                 family.Add(guest);
 
@@ -213,6 +223,7 @@ namespace WeddingPlannerWPF.ViewModels
                     return;
                 }
 
+                // Създаване на семейство и намиране на всички гости от това семейство
                 var family = new Family(FamilyId);
                 var familyGuests = AvailableGuests.Where(g => g.FamilyId == FamilyId).ToList();
 
@@ -222,6 +233,7 @@ namespace WeddingPlannerWPF.ViewModels
                     return;
                 }
 
+                // Добавяне на всички гости от семейството към family компонента
                 foreach (var guest in familyGuests)
                 {
                     family.Add(guest);
@@ -258,8 +270,10 @@ namespace WeddingPlannerWPF.ViewModels
                     return;
                 }
 
+                // Забраняване на две семейства да седят заедно на избраната маса
                 SelectedTable.BanFamilyPair(BanFamily1, BanFamily2);
                 AddLog($"Banned {BanFamily1} and {BanFamily2} from sitting together at {SelectedTable.Name}");
+
                 BanFamily1 = string.Empty;
                 BanFamily2 = string.Empty;
 
@@ -286,6 +300,7 @@ namespace WeddingPlannerWPF.ViewModels
                 var families = table.GetFamilies();
                 var bannedPairs = table.GetBannedPairs();
 
+                // Генериране на детайлен отчет за масата
                 var details = $"{table.Name} Details:\n";
                 details += $"Total Guests: {guests.Count}/{table.MaxGuests}\n";
                 details += $"Families: {string.Join(", ", families)} ({families.Count}/{table.MaxFamilies})\n";
@@ -316,6 +331,7 @@ namespace WeddingPlannerWPF.ViewModels
             }
         }
 
+        // Показване на всички нотификации от планировчика
         private void ShowNotifications()
         {
             try
@@ -338,6 +354,7 @@ namespace WeddingPlannerWPF.ViewModels
             }
         }
 
+        // Почистване на всички нотификации от планировчика
         private void ClearNotifications()
         {
             try
@@ -351,6 +368,7 @@ namespace WeddingPlannerWPF.ViewModels
             }
         }
 
+        // Обновяване на дисплея с най-новата нотификация
         private void UpdateNotificationDisplay()
         {
             try
@@ -367,8 +385,11 @@ namespace WeddingPlannerWPF.ViewModels
             }
         }
 
+
         private void AddLog(string message)
         {
+            // Добавяне на съобщение в лога с timestamp
+            // Новото съобщение се добавя отгоре за по-лесно четене
             Log = $"{DateTime.Now:HH:mm:ss} - {message}\n" + Log;
         }
     }

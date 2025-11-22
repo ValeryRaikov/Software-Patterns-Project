@@ -3,6 +3,7 @@
 namespace WeddingPlannerWPF.Models
 {
     // Composite pattern - Composite компонент, съдържащ гости/семейства
+    // Имплементира както ISeatComponent (за композитния шаблон), така и IWeddingSubject (за наблюдателния шаблон)
     public class Table : ISeatComponent, IWeddingSubject
     {
         public int TableId { get; }
@@ -10,21 +11,29 @@ namespace WeddingPlannerWPF.Models
         public int MaxGuests { get; set; } = 10;
         public int MaxFamilies { get; set; } = 2;
 
+        // Списък с компоненти на масата (гости или семейства)
         private List<ISeatComponent> Components { get; set; }
-        private HashSet<Tuple<string, string>> BannedFamilyPairs { get; set; }  
 
+        // HashSet от забранени комбинации от семейства, които не могат да седят заедно
+        // Използва Tuple за съхраняване на двойки фамилни имена
+        private HashSet<Tuple<string, string>> BannedFamilyPairs { get; set; }
+
+        // Списък с наблюдатели, които следят за промени в масата
         private List<IWeddingObserver> _observers = new List<IWeddingObserver>();
 
+        // Регистрира наблюдател за получаване на уведомления
         public void Attach(IWeddingObserver observer)
         {
             _observers.Add(observer);
         }
 
+        // Премахва наблюдател от списъка
         public void Detach(IWeddingObserver observer)
         {
             _observers.Remove(observer);
         }
 
+        // Уведомява всички наблюдатели за добавен гост
         public void NotifyGuestAdded(Guest guest, Table table)
         {
             foreach (var observer in _observers)
@@ -33,6 +42,7 @@ namespace WeddingPlannerWPF.Models
             }
         }
 
+        // Уведомява всички наблюдатели за премахнат гост
         public void NotifyGuestRemoved(Guest guest, Table table)
         {
             foreach (var observer in _observers)
@@ -41,6 +51,7 @@ namespace WeddingPlannerWPF.Models
             }
         }
 
+        // Уведомява за конфликт между две семейства
         public void NotifyFamilyBanned(string family1, string family2, Table table)
         {
             foreach (var observer in _observers)
@@ -49,6 +60,7 @@ namespace WeddingPlannerWPF.Models
             }
         }
 
+        // Уведомява за нарушение на правило
         public void NotifyRuleViolation(string message)
         {
             foreach (var observer in _observers)
@@ -64,9 +76,11 @@ namespace WeddingPlannerWPF.Models
             BannedFamilyPairs = new HashSet<Tuple<string, string>>();
         }
 
+        // Връща общия брой гости на масата (сумира гостите от всички компоненти)
         public int GetGuestCount() => Components.Sum(c => c.GetGuestCount());
 
-        public IEnumerable<Guest> GetGuests() // Iterator pattern -> обхожда всички гости на масата
+        // Iterator pattern -> обхожда всички гости на масата
+        public IEnumerable<Guest> GetGuests() 
         {
             foreach (var component in Components)
             {
@@ -77,6 +91,7 @@ namespace WeddingPlannerWPF.Models
             }
         }
 
+        // Проверява дали даден компонент може да бъде добавен към масата
         public bool CanAdd(ISeatComponent component)
         {
             // Проверка за лимит на гости на масата
@@ -122,6 +137,7 @@ namespace WeddingPlannerWPF.Models
             return true;
         }
 
+        // Добавя компонент към масата след успешна валидация
         public void Add(ISeatComponent component)
         {
             if (!CanAdd(component))
@@ -136,6 +152,7 @@ namespace WeddingPlannerWPF.Models
             }
         }
 
+        // Премахва компонент от масата
         public void Remove(ISeatComponent component)
         {
             Components.Remove(component);
@@ -147,6 +164,7 @@ namespace WeddingPlannerWPF.Models
             }
         }
 
+        // Връща списък с всички фамилни имена на масата
         public List<string> GetFamilies()
         {
             var families = new HashSet<string>();
@@ -157,6 +175,7 @@ namespace WeddingPlannerWPF.Models
             return families.ToList();
         }
 
+        // Забранява две семейства да седят на една маса
         public void BanFamilyPair(string family1, string family2)
         {
             // Създаване на сортирана двойка за консистентност
@@ -169,6 +188,7 @@ namespace WeddingPlannerWPF.Models
             NotifyFamilyBanned(family1, family2, this);
         }
 
+        // Връща списък с всички забранени двойки семейства
         public List<string> GetBannedPairs()
         {
             return BannedFamilyPairs.Select(p => $"{p.Item1} - {p.Item2}").ToList();
