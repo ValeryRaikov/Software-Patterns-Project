@@ -43,6 +43,7 @@ namespace WeddingPlannerWPF.Models
             {
                 if (guest.FamilyId != FamilyId)
                     throw new ArgumentException("Guest does not belong to this family");
+
                 Members.Add(guest);
             }
         }

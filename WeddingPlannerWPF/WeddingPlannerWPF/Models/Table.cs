@@ -126,7 +126,6 @@ namespace WeddingPlannerWPF.Models
 
                     if (BannedFamilyPairs.Contains(pair))
                     {
-
                         NotifyRuleViolation($"Cannot add {component.Name} to {Name}: Families {family1} and {family2} are banned from sitting together");
 
                         return false;
@@ -172,6 +171,7 @@ namespace WeddingPlannerWPF.Models
             {
                 families.UnionWith(component.GetFamilies());
             }
+
             return families.ToList();
         }
 
@@ -197,6 +197,7 @@ namespace WeddingPlannerWPF.Models
         public override string ToString()
         {
             var families = GetFamilies();
+
             return $"{Name} - {GetGuestCount()}/{MaxGuests} guests, {families.Count}/{MaxFamilies} families";
         }
     }

@@ -26,10 +26,7 @@ namespace WeddingPlannerWPF.Models
         // Използва yield return за съвместимост с IEnumerable
         public IEnumerable<Guest> GetGuests()
         {
-            if (this != null)
-            {
                 yield return this; // Гостът е сам свой собствен итератор
-            }
         }
 
         // Проверява дали може да се добави компонент към гост (винаги false заради Leaf component)

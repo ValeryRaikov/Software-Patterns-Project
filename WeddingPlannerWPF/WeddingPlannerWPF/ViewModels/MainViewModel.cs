@@ -131,7 +131,6 @@ namespace WeddingPlannerWPF.ViewModels
             AddLog("Sample data loaded");
         }
 
-
         private void AddGuest()
         {
             try
@@ -242,10 +241,12 @@ namespace WeddingPlannerWPF.ViewModels
                 if (SelectedTable.CanAdd(family))
                 {
                     SelectedTable.Add(family);
+
                     foreach (var guest in familyGuests)
                     {
                         AvailableGuests.Remove(guest);
                     }
+
                     AddLog($"Assigned {family.Name} to {SelectedTable.Name}");
                     UpdateNotificationDisplay();
                 }
@@ -384,7 +385,6 @@ namespace WeddingPlannerWPF.ViewModels
                 NotificationLog = $"Error updating notifications: {ex.Message}";
             }
         }
-
 
         private void AddLog(string message)
         {
