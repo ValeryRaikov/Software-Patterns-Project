@@ -93,6 +93,8 @@ namespace WeddingPlannerWPF.ViewModels
         public ICommand AssignGuestCommand { get; }
         public ICommand AssignFamilyCommand { get; }
         public ICommand BanFamilyCommand { get; }
+        public ICommand RemoveGuestCommand { get; }
+        public ICommand ClearTableCommand { get; }
         public ICommand ShowTableDetailsCommand { get; }
         public ICommand ShowNotificationsCommand { get; }
         public ICommand ClearNotificationsCommand { get; }
@@ -108,6 +110,8 @@ namespace WeddingPlannerWPF.ViewModels
             AssignGuestCommand = new RelayCommand(AssignGuest, () => SelectedGuest != null && SelectedTable != null);
             AssignFamilyCommand = new RelayCommand(AssignFamily, () => !string.IsNullOrWhiteSpace(FamilyId) && SelectedTable != null);
             BanFamilyCommand = new RelayCommand(BanFamily, () => !string.IsNullOrWhiteSpace(BanFamily1) && !string.IsNullOrWhiteSpace(BanFamily2) && SelectedTable != null);
+            RemoveGuestCommand = new RelayCommand(RemoveGuest, () => SelectedGuest != null);
+            ClearTableCommand = new RelayCommand(ClearTable, () => SelectedTable != null);
             ShowTableDetailsCommand = new RelayCommand(ShowTableDetails, () => SelectedTable != null);
             ShowNotificationsCommand = new RelayCommand(ShowNotifications);
             ClearNotificationsCommand = new RelayCommand(ClearNotifications);
@@ -283,6 +287,60 @@ namespace WeddingPlannerWPF.ViewModels
             catch (Exception ex)
             {
                 AddLog($"Error banning families: {ex.Message}");
+            }
+        }
+
+        private void RemoveGuest()
+        {
+            try
+            {
+                if (SelectedGuest == null)
+                {
+                    AddLog("Error: No guest selected");
+                    return;
+                }
+
+                var guest = SelectedGuest;
+                AvailableGuests.Remove(guest);
+                AddLog($"Removed guest: {guest.Name}");
+
+                // Изчистване на селекцията
+                SelectedGuest = null;
+            }
+            catch (Exception ex)
+            {
+                AddLog($"Error removing guest: {ex.Message}");
+            }
+        }
+
+        private void ClearTable()
+        {
+            try
+            {
+                if (SelectedTable == null)
+                {
+                    AddLog("Error: No table selected");
+                    return;
+                }
+
+                var table = SelectedTable;
+                var guestsBeforeClear = table.GetGuests().ToList();
+
+                // Изпразваме масата
+                table.ClearTable();
+
+                // Връщаме всички гости в списъка с налични гости
+                foreach (var guest in guestsBeforeClear)
+                {
+                    AvailableGuests.Add(guest);
+                }
+
+                AddLog($"Cleared {table.Name} and returned {guestsBeforeClear.Count} guests to available list");
+                UpdateNotificationDisplay();
+            }
+            catch (Exception ex)
+            {
+                AddLog($"Error clearing table: {ex.Message}");
             }
         }
 

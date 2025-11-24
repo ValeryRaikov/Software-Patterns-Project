@@ -29,6 +29,7 @@
                     <TextBlock Text="Family ID" Margin="5,0" Foreground="Gray" FontSize="10"/>
 
                     <Button Content="Add Guest" Command="{Binding AddGuestCommand}" Margin="5"/>
+                    <Button Content="Remove Guest" Command="{Binding RemoveGuestCommand}" Margin="5"/>
                 </StackPanel>
             </GroupBox>
 
@@ -39,6 +40,7 @@
                     <TextBlock Text="1. Select guest from left list" Margin="5,10,5,0" FontWeight="Bold" Foreground="DarkBlue"/>
                     <TextBlock Text="2. Select table from right list" Margin="5,0,5,5" FontWeight="Bold" Foreground="DarkBlue"/>
                     <Button Content="Assign Selected Guest" Command="{Binding AssignGuestCommand}" Margin="5" Background="LightGreen"/>
+                    <Button Content="Clear Table" Command="{Binding ClearTableCommand}" Margin="5"/>
 
                     <TextBox Text="{Binding FamilyId, UpdateSourceTrigger=PropertyChanged}" 
                              Margin="5,10,5,0" Padding="3"/>
@@ -121,7 +123,7 @@
                          FontFamily="Consolas"/>
             </GroupBox>
 
-            <GroupBox Header="🔔 Observer Pattern Notifications" Grid.Row="2" Margin="5" Background="LightCyan">
+            <GroupBox Header="Observer Pattern Notifications" Grid.Row="2" Margin="5" Background="LightCyan">
                 <TextBox Text="{Binding NotificationLog, Mode=OneWay}" 
                          IsReadOnly="True" 
                          VerticalScrollBarVisibility="Auto"

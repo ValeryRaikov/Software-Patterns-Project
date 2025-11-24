@@ -194,6 +194,20 @@ namespace WeddingPlannerWPF.Models
             return BannedFamilyPairs.Select(p => $"{p.Item1} - {p.Item2}").ToList();
         }
 
+        public void ClearTable()
+        {
+            var allGuests = GetGuests().ToList();
+
+            // Изчистваме компонентите
+            Components.Clear();
+
+            // Нотифицираме за всеки премахнат гост
+            foreach (var guest in allGuests)
+            {
+                NotifyGuestRemoved(guest, this);
+            }
+        }
+
         public override string ToString()
         {
             var families = GetFamilies();
